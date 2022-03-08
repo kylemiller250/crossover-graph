@@ -12,20 +12,28 @@
   <div id="3d-graph"></div>
 
   <script>
+    highlightNode = null;
     const Graph = ForceGraph3D()
       (document.getElementById('3d-graph'))
         .jsonUrl('./datasets/output_data.json')
         .nodeAutoColorBy('group')
+	.linkColor(() => 'green')
+        .linkOpacity(0.08)
+        .onNodeHover(node => {console.log(node); updateHighlight();})
         .nodeThreeObject(node => {
           const sprite = new SpriteText(node.name);
           sprite.material.depthWrite = false; // make sprite background transparent
-          sprite.color = node.color;
+          sprite.color = 'white';
           sprite.textHeight = 1 + Math.round(node.edge_count / 4);
+          sprite.strokeWidth = 2;
+          sprite.strokeColor = 'black';
           return sprite;
-        });
+        })
+        .warmupTicks(25)
+        .cooldownTime(0)
+        .enableNodeDrag(false);
 
-    // Spread nodes a little wider
-    Graph.d3Force('charge').strength(-240);
+        Graph.d3Force('charge').strength(-240);
 
   </script>
 </body>
